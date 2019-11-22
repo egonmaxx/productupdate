@@ -7,6 +7,6 @@
         <title>Laravel</title>
     </head>
     <body>
-    <h1>{{$isDbConnected}}</h1>
+    <h1>{{$isDbConnected ?? ''}}</h1>
     </body>
 </html>

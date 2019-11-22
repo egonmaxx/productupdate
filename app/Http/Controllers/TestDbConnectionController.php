@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\User;
+use Illuminate\Support\Facades\DB;
 
 class TestDbConnectionController extends Controller
 {
@@ -15,6 +15,11 @@ class TestDbConnectionController extends Controller
      */
     public function show()
     {
-        return view('testdbconnection',['isDbConnected' => 'OK']);
+        if (DB::connection()->getPDO()) {
+            $connected = true;
+        } else {
+            $connected = false;
+        }
+        return view('testdbconnection',['isDbConnected' => $connected]);
     }
 }
