@@ -55,7 +55,6 @@ class ProductUpdateController extends Controller
         $productToInsert = [];
         foreach ($productsImportArray as $productImport) {
             
-
             $result = DB::table('product')->where('sku', $productImport[0])->first();
 
             /* inserting new product */
@@ -71,8 +70,10 @@ class ProductUpdateController extends Controller
         }
         /* inserting new product */
 
+        /* Getting all products after db changes */
         $allProductsAfterUpdate = DB::table('product')->get();
-
+        /* Getting all products after db changes */
+        
         return view('productsupdate',['productToDelete' => $productToDelete, 'productsToUpdate' => $productsToUpdate, 'productToInsert' => $productToInsert,'allProductsAfterUpdate' => $allProductsAfterUpdate]);
     }
 
