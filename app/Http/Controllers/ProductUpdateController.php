@@ -22,14 +22,16 @@ class ProductUpdateController extends Controller
         array_shift($data);
         /* drop header */
         
+        $productsImportArray = [];
         foreach($data as $row){
-            $productsImportArray[] = explode(';',$row);
+            $productsImportArray[] = explode(';',str_replace('\n','',$row));
         }
 
         /* deleting products */    
         $allProducts = DB::table('product')->get();
         
         $productToDelete = [];
+        $productsToUpdate = [];
         foreach ($allProducts as $product) {//foreach all products
             $keepThisProduct = false;
             foreach ($productsImportArray as $productImport) {//foreach all imported products to find updateable rows
@@ -53,27 +55,32 @@ class ProductUpdateController extends Controller
 
         /* inserting new product */
         $productToInsert = [];
-        foreach ($productsImportArray as $productImport) {
-            
-            $result = DB::table('product')->where('sku', $productImport[0])->first();
 
-            /* inserting new product */
-            if (!$result) {
-                $product->sku = $productImport[0];
-                $product->name = $productImport[1];
-                $product->shor_desc = $productImport[2];
-                $product->base_img_url = $productImport[3];
-                $productToInsert[] = $product;
-                DB::table('product')->insert(['sku'=>$productImport[0], 'name' => $productImport[1], 'short_desc' => $productImport[2], 'base_img_url' => $productImport[3]]);
-                //DB::table('product')->insert(['sku'=>'123Test'.mt_rand(1,100000), 'name' => 'TestName', 'short_desc' => 'Test Shor Desc', 'base_img_url' => 'http://example.com/TestImage.png']);
+        if (count($productsImportArray[0]) == 4) {
+            foreach ($productsImportArray as $productImport) {
+                
+                $result = DB::table('product')->where('sku', $productImport[0])->first();
+
+                /* inserting new product */
+                if (!$result) {
+                    $product = new \stdClass();
+                    $product->sku = $productImport[0];
+                    $product->name = $productImport[1];
+                    $product->short_desc = $productImport[2];
+                    $product->base_img_url = $productImport[3];
+                    $productToInsert[] = $product;
+                    DB::table('product')->insert(['sku'=>$productImport[0], 'name' => $productImport[1], 'short_desc' => $productImport[2], 'base_img_url' => $productImport[3]]);
+                    //DB::table('product')->insert(['sku'=>'123Test'.mt_rand(1,100000), 'name' => 'TestName', 'short_desc' => 'Test Shor Desc', 'base_img_url' => 'http://example.com/TestImage.png']);
+                }
             }
         }
         /* inserting new product */
 
+        $allProductsAfterUpdate = [];
         /* Getting all products after db changes */
         $allProductsAfterUpdate = DB::table('product')->get();
         /* Getting all products after db changes */
-        
+
         return view('productsupdate',['productToDelete' => $productToDelete, 'productsToUpdate' => $productsToUpdate, 'productToInsert' => $productToInsert,'allProductsAfterUpdate' => $allProductsAfterUpdate]);
     }
 
