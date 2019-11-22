@@ -10,9 +10,8 @@ use Illuminate\Support\Facades\DB;
 class ProductUpdateController extends Controller
 {
     /**
-     * Show the profile for the given user.
+     * Updating product table by csv file and showing all changes in a view
      *
-     * @param  int  $id
      * @return View
      */
     public static function updateProductsByCsv()
